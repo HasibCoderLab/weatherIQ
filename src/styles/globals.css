@@ -1,0 +1,191 @@
+@import "tailwindcss";
+
+/*
+ * WeatherIQ design tokens (Tailwind v4 CSS-first theme).
+ * Visual direction: premium / modern / calm / atmospheric / technical.
+ * The dark palette carries forward SkyLens' indigo/cyan identity with
+ * restrained glow — no neon excess (PRD §26).
+ */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: var(--font-inter), "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --color-surface: #0b0c3d;
+  --color-surface-dim: #070733;
+  --color-surface-container: #14154a;
+  --color-surface-container-high: #1e1f5e;
+  --color-surface-bright: #2e3065;
+  --color-on-surface: #e8e8ff;
+  --color-on-surface-muted: #9fa3c8;
+  --color-outline: #3a3f66;
+  --color-outline-variant: #262a4d;
+
+  --color-primary: #00dbe7;
+  --color-primary-strong: #00b8c4;
+  --color-on-primary: #00363a;
+  --color-secondary: #c9a2ff;
+  --color-tertiary: #ffd682;
+  --color-danger: #ffb4ab;
+
+  /* Light theme tokens (applied via .dark toggle inversion below). */
+  --color-light-surface: #f4f5fb;
+  --color-light-surface-container: #ffffff;
+  --color-light-on-surface: #1b1d3a;
+  --color-light-on-surface-muted: #5d6080;
+  --color-light-outline: #d5d7ea;
+}
+
+/*
+ * Light theme: re-map the semantic tokens. Components always use semantic
+ * names (surface, on-surface, …) so theme switching is token-level only.
+ */
+:root:not(.dark) {
+  --color-surface: #f4f5fb;
+  --color-surface-dim: #eceef7;
+  --color-surface-container: #ffffff;
+  --color-surface-container-high: #f0f1fa;
+  --color-surface-bright: #e6e8f5;
+  --color-on-surface: #1b1d3a;
+  --color-on-surface-muted: #5d6080;
+  --color-outline: #d5d7ea;
+  --color-outline-variant: #e3e5f2;
+  --color-primary: #00777f;
+  --color-primary-strong: #00565c;
+  --color-on-primary: #ffffff;
+  --color-secondary: #6b21a8;
+  --color-tertiary: #92600a;
+  --color-danger: #b3261e;
+}@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background:
+      radial-gradient(1100px 500px at 85% -10%, rgb(0 219 231 / 0.08), transparent 60%),
+      radial-gradient(900px 480px at -10% 20%, rgb(201 162 255 / 0.06), transparent 55%),
+      var(--color-surface);
+    color: var(--color-on-surface);
+    font-family: var(--font-sans);
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /*
+   * Material Symbols — self-hosted subset (~6 KB, see public/fonts/README.md).
+   * font-display: block briefly renders icon names as hidden text instead of
+   * flashing raw ligature words (the correct trade-off for icon fonts).
+   * Declared in @layer base so Tailwind utilities like text-2xl still win.
+   */
+  @font-face {
+    font-family: "Material Symbols Outlined";
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url("/fonts/material-symbols-outlined.woff2") format("woff2");
+  }
+
+  .material-symbols-outlined {
+    font-family: "Material Symbols Outlined";
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "liga";
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-primary) 30%, transparent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Layered card surface — the core design primitive. */
+  .wiq-card {
+    background: color-mix(in srgb, var(--color-surface-container) 88%, transparent);
+    border: 1px solid var(--color-outline-variant);
+    border-radius: 1rem;
+    backdrop-filter: blur(12px);
+  }
+
+  .wiq-card-glow {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--color-primary) 12%, transparent),
+      0 8px 40px rgb(0 0 0 / 0.25);
+  }
+
+  .wiq-skeleton {
+    background: linear-gradient(
+      100deg,
+      var(--color-surface-container) 40%,
+      var(--color-surface-container-high) 50%,
+      var(--color-surface-container) 60%
+    );
+    background-size: 200% 100%;
+    animation: wiq-shimmer 1.4s ease-in-out infinite;
+    border-radius: 0.5rem;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .thin-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-outline) transparent;
+  }
+}
+
+@keyframes wiq-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes wiq-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.wiq-float {
+  animation: wiq-float 5s ease-in-out infinite;
+}
